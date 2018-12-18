@@ -1,0 +1,636 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+
+
+<head><meta name="generator" content="Hexo 3.8.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Session,Cookie,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="Cookie 机制Cookie 技术是客户端的解决方案，Cookie 是服务器发给客户端的特殊文本，而这些特殊信息以文本文件的方式储存在客户端，每次客户端给服务端发送请求都会带上这些特殊信息。 具体流程：  当用户使用浏览器访问一个支持 Cookie 的网站的时候，用户会提供包括用户名在内的个人信息并且提交至服务器  服务器在向客户端回传相应的超文本的同时也会发回这些个人信息（储存在 Respon">
+<meta name="keywords" content="Session,Cookie">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Cookie 和 Session 小结">
+<meta property="og:url" content="http://yoursite.com/2018/12/17/blogartitle03/index.html">
+<meta property="og:site_name" content="A Tang">
+<meta property="og:description" content="Cookie 机制Cookie 技术是客户端的解决方案，Cookie 是服务器发给客户端的特殊文本，而这些特殊信息以文本文件的方式储存在客户端，每次客户端给服务端发送请求都会带上这些特殊信息。 具体流程：  当用户使用浏览器访问一个支持 Cookie 的网站的时候，用户会提供包括用户名在内的个人信息并且提交至服务器  服务器在向客户端回传相应的超文本的同时也会发回这些个人信息（储存在 Respon">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:updated_time" content="2018-12-17T11:21:25.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Cookie 和 Session 小结">
+<meta name="twitter:description" content="Cookie 机制Cookie 技术是客户端的解决方案，Cookie 是服务器发给客户端的特殊文本，而这些特殊信息以文本文件的方式储存在客户端，每次客户端给服务端发送请求都会带上这些特殊信息。 具体流程：  当用户使用浏览器访问一个支持 Cookie 的网站的时候，用户会提供包括用户名在内的个人信息并且提交至服务器  服务器在向客户端回传相应的超文本的同时也会发回这些个人信息（储存在 Respon">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"remove","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2018/12/17/blogartitle03/">
+
+
+
+
+
+  <title>Cookie 和 Session 小结 | A Tang</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope="" itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope="" itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">A Tang</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">A Boy</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope="" itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2018/12/17/blogartitle03/">
+
+    <span hidden itemprop="author" itemscope="" itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tang">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope="" itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="A Tang">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Cookie 和 Session 小结</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-12-17T13:31:39+08:00">
+                2018-12-17
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope="" itemtype="http://schema.org/Thing">
+                  <a href="/categories/HTTP-协议/" itemprop="url" rel="index">
+                    <span itemprop="name">HTTP 协议</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h2 id="Cookie-机制"><a href="#Cookie-机制" class="headerlink" title="Cookie 机制"></a>Cookie 机制</h2><p>Cookie 技术是客户端的解决方案，Cookie 是服务器发给客户端的特殊文本，而这些特殊信息以文本文件的方式储存在客户端，<br>每次客户端给服务端发送请求都会带上这些特殊信息。</p>
+<p>具体流程：</p>
+<ol>
+<li><p>当用户使用浏览器访问一个支持 Cookie 的网站的时候，用户会提供包括用户名在内的个人信息并且提交至服务器</p>
+</li>
+<li><p>服务器在向客户端回传相应的超文本的同时也会发回这些个人信息（储存在 Response header中）,浏览器会将这些特殊信息储存在本机的统一位置</p>
+</li>
+<li><p>如果浏览器再次向服务器发送请求的时候，Cookie 会将储存在 Request Header中发到服务器。</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">GET /sample_page.html HTTP/1.1</span><br><span class="line">Host: www.example.org</span><br><span class="line">Cookie: yummy<span class="emphasis">_cookie=choco; tasty_</span>cookie=strawberry</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>服务器接收到浏览器的请求，就能够通过分析存放于请求头的 Cookie 得到客户端特有的信息，从而动态生成与该客户端相对应的内容。</p>
+</li>
+</ol>
+<h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>在程序中，一个用户所有的操作都属于同一个会话，而 web 应用程序使用 HTTP协议传输数据，但是HTTP协议是无状态的协议，一旦数据交换完毕，<br>客户端与服务器端的连接就会关闭，再次交换数据需要建立新的连接，那么怎么判断是否当前用户是否是刚刚那个会话呢？</p>
+<p>这时候就需要用 Cookie 机制来实现会话追踪，在每次请求中，Header（Request-Header）有两个属性：Set-Cookie 以及 Cookie 分配是设置 Cookie 和发送 Cookie</p>
+<h4 id="Set-Cookie"><a href="#Set-Cookie" class="headerlink" title="Set-Cookie"></a>Set-Cookie</h4><p>当访问一个带有的 Cookie 的网站的时候，服务器会返回客户端一个 Http 响应信息（Response），其中头部就包含 Set-Cookie，<br>这就说明了服务器给请求建立了一个 Cookie，并且在以后的请求中都会带有这个 Cookie 到服务器，直至到 Cookie 过期。<br><figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Set-Cookie: id=a3fWa</span><br></pre></td></tr></table></figure></p>
+<h4 id="Cookie"><a href="#Cookie" class="headerlink" title="Cookie"></a>Cookie</h4><p>Cookie 有一个生命周期</p>
+<ul>
+<li>如果生命周期是整个会话的话，那么浏览器就会将 Cookie 存在内存中，只要浏览器关闭就会自动清除内存的 Cookie</li>
+<li>如果生命周期是永久的话，那么浏览器就会将 Cookie存在硬盘中，但是浏览器关闭也不会将 Cookie 清除</li>
+</ul>
+<h3 id="Cookie-的一些属性"><a href="#Cookie-的一些属性" class="headerlink" title="Cookie 的一些属性"></a>Cookie 的一些属性</h3><ul>
+<li>Cookie 名称：Cookie 名称一旦创建，名称不能修改。 </li>
+<li>Cookie 值： <ul>
+<li>如果值为 Unicode 字符，则需要字符编码</li>
+<li>如果值为二进制数据，则需要使用 BASE64 编码。</li>
+</ul>
+</li>
+<li><p>Cookie 失效时间／过期时间： maxAge/Expires，单位为秒，默认为-1   </p>
+<ul>
+<li>如果值为正数，说明时间大于这个值之后，Cookie 失效</li>
+<li>如果值为负数，说明该 Cookie 为临时的，关闭浏览器即失效，浏览器也不会以任何形式保存</li>
+<li>如果值为零，说明删除该 Cookie<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Set-Cookie: id=a3fWa; Expires=Wed, 21 Oct 2015 07:28:00 GMT;</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+</li>
+<li><p>Cookie作用域：<br>&#160; &#160; &#160; &#160; Domain 和 Path 标识定义了Cookie的作用域：即Cookie应该发送给哪些URL。<br>Domain 标识指定了哪些主机可以接受Cookie。如果不指定，默认为当前文档的主机（不包含子域名）。如果指定了Domain，则一般包含子域名。</p>
+</li>
+</ul>
+<p>##Session 机制</p>
+<p>&#160; &#160; &#160; &#160; Session则是服务端的解决方案，它是通过服务器来保持状态的。客户端访问服务器时候，服务器把客户端信息以Session的形式记录在<br>服务器上，Session会在服务器给客户端所开辟的存储空间，在其中保存的信息就是用于保持状态，而服务器给客户端创建Session的同时，<br>也会生成唯一的Session ID来确保在以后的请求中来重新获得这个Session。</p>
+<h4 id="Session-生命周期"><a href="#Session-生命周期" class="headerlink" title="Session 生命周期"></a>Session 生命周期</h4><p>&#160; &#160; &#160; &#160; Session是储存在服务器端，而服务器一般会Session存在内存中，<br>Session生成后，只要用户继续访问，服务器就会更新Session的最后访问时间，并维护该Session。<br>无论是否读写Session，服务器都认为该用户的Session“活跃（active）”了一次。</p>
+<h4 id="Session的有效期"><a href="#Session的有效期" class="headerlink" title="Session的有效期"></a>Session的有效期</h4><p>&#160; &#160; &#160; &#160;服务器会将长期没有活跃的Session从内存中删除，这个就是Session超时时间。</p>
+<h2 id="Session-与-Cookie之间的区别"><a href="#Session-与-Cookie之间的区别" class="headerlink" title="Session 与 Cookie之间的区别"></a>Session 与 Cookie之间的区别</h2><ul>
+<li>Cookie是存放在浏览器上的，而Session存放在服务器上的</li>
+<li>Cookie不是很安全，因为Cookie存放在客户端中，可以浏览、修改以及复制到Cookie内容</li>
+<li>Session会在一定时间内保存在服务器上。当访问增多，会比较占用你服务器的性能。考虑到减轻服务器性能方面，应当使用Cookie</li>
+<li>Cookie需要客户端浏览器的支持，如果客户端禁用Cookie，或者不支持Cookie，则跟踪会话失效，而不支持的Cookie的浏览器可以<br>使用Session+URL重写来实现，注意的是：一切的用到Session程序的URL都要进行URL地址重写，否则Session会话跟踪还会失效。</li>
+</ul>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Session/" rel="tag"><i class="fa fa-tag"></i> Session</a>
+          
+            <a href="/tags/Cookie/" rel="tag"><i class="fa fa-tag"></i> Cookie</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2018/12/07/blogartitle02/" rel="next" title="最小和问题">
+                <i class="fa fa-chevron-left"></i> 最小和问题
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Tang</span>
+</div>
+
+
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
