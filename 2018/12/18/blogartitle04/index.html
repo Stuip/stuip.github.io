@@ -104,7 +104,7 @@
 <meta property="og:site_name" content="A Tang">
 <meta property="og:description" content="##有效的括号  问题  123456给定一个只包括 &apos;(&apos;，&apos;)&apos;，&apos;&amp;#123;&apos;，&apos;&amp;#125;&apos;，&apos;[&apos;，&apos;]&apos; 的字符串，判断字符串是否有效。有效字符串需满足：    左括号必须用相同类型的右括号闭合。    左括号必须以正确的顺序闭合。    注意空字符串可被认为是有效字符串。 解题思路（使用数组模拟栈来实现） 现将字符串转化为字符数组 –&amp;gt; char[] arr; 利用一个与字">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2018-12-18T04:38:01.000Z">
+<meta property="og:updated_time" content="2018-12-18T04:55:52.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="有效的括号">
 <meta name="twitter:description" content="##有效的括号  问题  123456给定一个只包括 &apos;(&apos;，&apos;)&apos;，&apos;&amp;#123;&apos;，&apos;&amp;#125;&apos;，&apos;[&apos;，&apos;]&apos; 的字符串，判断字符串是否有效。有效字符串需满足：    左括号必须用相同类型的右括号闭合。    左括号必须以正确的顺序闭合。    注意空字符串可被认为是有效字符串。 解题思路（使用数组模拟栈来实现） 现将字符串转化为字符数组 –&amp;gt; char[] arr; 利用一个与字">
@@ -366,8 +366,9 @@
 <li>如果arr长度小于2，返回错误</li>
 <li>开始Pop数组中的值，  <ul>
 <li>如果Pop出来的数为{,(,[的话，压入栈中  </li>
-<li>如果Pop出来的数为 },),]的话，判断help是否为空，若为空，返回false<ul>
-<li>如果不为空的话，与栈顶匹配是否吻合，如果吻合，返回true，若不是，反之</li>
+<li>如果Pop出来的数为 },),]的话，判断help是否为空，<ul>
+<li>若为空，返回false</li>
+<li>若不为空的话，与栈顶匹配是否吻合，如果吻合，返回true，若不是，反之</li>
 </ul>
 </li>
 </ul>
