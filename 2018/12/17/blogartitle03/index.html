@@ -104,12 +104,12 @@
 <meta property="og:site_name" content="A Tang">
 <meta property="og:description" content="Cookie 机制&amp;#160; &amp;#160; &amp;#160; &amp;#160; Cookie 技术是客户端的解决方案，Cookie 是服务器发给客户端的特殊文本，而这些特殊信息以文本文件的方式储存在客户端，每次客户端给服务端发送请求都会带上这些特殊信息。   具体流程：   当用户使用浏览器访问一个支持 Cookie 的网站的时候，用户会提供包括用户名在内的个人信息并且提交至服务器  服务器在向客户端回">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:image" content="http://yoursite.com/2018/12/17/blogartitle03/blogtitle03/05.png">
-<meta property="og:updated_time" content="2018-12-18T04:17:51.000Z">
+<meta property="og:image" content="http://yoursite.com/2018/12/17/blogartitle03/05.png">
+<meta property="og:updated_time" content="2018-12-18T04:19:04.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Cookie 和 Session 小结">
 <meta name="twitter:description" content="Cookie 机制&amp;#160; &amp;#160; &amp;#160; &amp;#160; Cookie 技术是客户端的解决方案，Cookie 是服务器发给客户端的特殊文本，而这些特殊信息以文本文件的方式储存在客户端，每次客户端给服务端发送请求都会带上这些特殊信息。   具体流程：   当用户使用浏览器访问一个支持 Cookie 的网站的时候，用户会提供包括用户名在内的个人信息并且提交至服务器  服务器在向客户端回">
-<meta name="twitter:image" content="http://yoursite.com/2018/12/17/blogartitle03/blogtitle03/05.png">
+<meta name="twitter:image" content="http://yoursite.com/2018/12/17/blogartitle03/05.png">
 
 
 
@@ -373,7 +373,7 @@
 <li><p>服务器接收到浏览器的请求，就能够通过分析存放于请求头的 Cookie 得到客户端特有的信息，从而动态生成与该客户端相对应的内容。</p>
 </li>
 </ol>
-<p><img src="/2018/12/17/blogartitle03/blogtitle03/05.png" alt="流程图"></p>
+<p><img src="/2018/12/17/blogartitle03/05.png" alt="流程图"></p>
 <h2 id="问题"><a href="#问题" class="headerlink" title="问题"></a>问题</h2><p>&#160; &#160; &#160; &#160; 在程序中，一个用户所有的操作都属于同一个会话，而 web 应用程序使用 HTTP协议传输数据，但是HTTP协议是无状态的协议，一旦数据交换完毕，<br>客户端与服务器端的连接就会关闭，再次交换数据需要建立新的连接，那么怎么判断是否当前用户是否是刚刚那个会话呢？</p>
 <p>这时候就需要用 Cookie 机制来实现会话追踪，在每次请求中，Header（Request-Header）有两个属性：Set-Cookie 以及 Cookie 分配是设置 Cookie 和发送 Cookie</p>
 <h4 id="Set-Cookie"><a href="#Set-Cookie" class="headerlink" title="Set-Cookie"></a>Set-Cookie</h4><p>当访问一个带有的 Cookie 的网站的时候，服务器会返回客户端一个 Http 响应信息（Response），其中头部就包含 Set-Cookie，<br>这就说明了服务器给请求建立了一个 Cookie，并且在以后的请求中都会带有这个 Cookie 到服务器，直至到 Cookie 过期。<br><figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Set-Cookie: id=a3fWa</span><br></pre></td></tr></table></figure></p>
