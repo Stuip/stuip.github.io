@@ -105,7 +105,7 @@
 <meta property="og:description" content="Cookie 机制&amp;#160; &amp;#160; &amp;#160; &amp;#160; Cookie 技术是客户端的解决方案，Cookie 是服务器发给客户端的特殊文本，而这些特殊信息以文本文件的方式储存在客户端，每次客户端给服务端发送请求都会带上这些特殊信息。   具体流程：   当用户使用浏览器访问一个支持 Cookie 的网站的时候，用户会提供包括用户名在内的个人信息并且提交至服务器  服务器在向客户端回">
 <meta property="og:locale" content="zh-Hans">
 <meta property="og:image" content="http://yoursite.com/2018/12/17/blogartitle03/05.png">
-<meta property="og:updated_time" content="2018-12-18T04:25:27.000Z">
+<meta property="og:updated_time" content="2019-01-21T12:16:29.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Cookie 和 Session 小结">
 <meta name="twitter:description" content="Cookie 机制&amp;#160; &amp;#160; &amp;#160; &amp;#160; Cookie 技术是客户端的解决方案，Cookie 是服务器发给客户端的特殊文本，而这些特殊信息以文本文件的方式储存在客户端，每次客户端给服务端发送请求都会带上这些特殊信息。   具体流程：   当用户使用浏览器访问一个支持 Cookie 的网站的时候，用户会提供包括用户名在内的个人信息并且提交至服务器  服务器在向客户端回">
@@ -400,8 +400,7 @@
 <li><p>Cookie作用域：<br>&#160; &#160; &#160; &#160; Domain 和 Path 标识定义了Cookie的作用域：即Cookie应该发送给哪些URL。<br>Domain 标识指定了哪些主机可以接受Cookie。如果不指定，默认为当前文档的主机（不包含子域名）。如果指定了Domain，则一般包含子域名。</p>
 </li>
 </ul>
-<p>##Session 机制</p>
-<p>&#160; &#160; &#160; &#160; Session则是服务端的解决方案，它是通过服务器来保持状态的。客户端访问服务器时候，服务器把客户端信息以Session的形式记录在<br>服务器上，Session会在服务器给客户端所开辟的存储空间，在其中保存的信息就是用于保持状态，而服务器给客户端创建Session的同时，<br>也会生成唯一的Session ID来确保在以后的请求中来重新获得这个Session。</p>
+<h4 id="Session-机制"><a href="#Session-机制" class="headerlink" title="Session 机制"></a>Session 机制</h4><p>&#160; &#160; &#160; &#160; Session则是服务端的解决方案，它是通过服务器来保持状态的。客户端访问服务器时候，服务器把客户端信息以Session的形式记录在<br>服务器上，Session会在服务器给客户端所开辟的存储空间，在其中保存的信息就是用于保持状态，而服务器给客户端创建Session的同时，<br>也会生成唯一的Session ID来确保在以后的请求中来重新获得这个Session。</p>
 <h4 id="Session-生命周期"><a href="#Session-生命周期" class="headerlink" title="Session 生命周期"></a>Session 生命周期</h4><p>&#160; &#160; &#160; &#160; Session是储存在服务器端，而服务器一般会Session存在内存中，<br>Session生成后，只要用户继续访问，服务器就会更新Session的最后访问时间，并维护该Session。<br>无论是否读写Session，服务器都认为该用户的Session“活跃（active）”了一次。</p>
 <h4 id="Session的有效期"><a href="#Session的有效期" class="headerlink" title="Session的有效期"></a>Session的有效期</h4><p>&#160; &#160; &#160; &#160;服务器会将长期没有活跃的Session从内存中删除，这个就是Session超时时间。</p>
 <h2 id="Session-与-Cookie之间的区别"><a href="#Session-与-Cookie之间的区别" class="headerlink" title="Session 与 Cookie之间的区别"></a>Session 与 Cookie之间的区别</h2><ul>
