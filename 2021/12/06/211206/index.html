@@ -96,18 +96,18 @@
 
 
 
-<meta name="description" content="Dynamic Select Method">
+<meta name="description" content="InheritanceInerface Inheritance 由于最近在观看CS61B的Java基础部分，对于Java的继承又有新的感悟，对此做一些总结。 当使用接口继承(inerface inheritance), 需要在子类中使用implements关键词实现。 12345678910111213public interface List&amp;lt;T&amp;gt;&amp;#123;    /**">
 <meta name="keywords" content="Java">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Dynamic Select Method">
 <meta property="og:url" content="http://yoursite.com/2021/12/06/211206/index.html">
 <meta property="og:site_name" content="A Standing Man">
-<meta property="og:description" content="Dynamic Select Method">
+<meta property="og:description" content="InheritanceInerface Inheritance 由于最近在观看CS61B的Java基础部分，对于Java的继承又有新的感悟，对此做一些总结。 当使用接口继承(inerface inheritance), 需要在子类中使用implements关键词实现。 12345678910111213public interface List&amp;lt;T&amp;gt;&amp;#123;    /**">
 <meta property="og:locale" content="zh-Hans">
-<meta property="og:updated_time" content="2021-12-06T02:34:39.129Z">
+<meta property="og:updated_time" content="2021-12-06T06:30:19.751Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Dynamic Select Method">
-<meta name="twitter:description" content="Dynamic Select Method">
+<meta name="twitter:description" content="InheritanceInerface Inheritance 由于最近在观看CS61B的Java基础部分，对于Java的继承又有新的感悟，对此做一些总结。 当使用接口继承(inerface inheritance), 需要在子类中使用implements关键词实现。 12345678910111213public interface List&amp;lt;T&amp;gt;&amp;#123;    /**">
 
 
 
@@ -307,6 +307,39 @@
           </span>
 
           
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+                  >
+                
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Java/JVM/" itemprop="url" rel="index">
+                    <span itemprop="name">JVM</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
 
           
             
@@ -334,7 +367,9 @@
       
 
       
-        <h3 id="Dynamic-Select-Method"><a href="#Dynamic-Select-Method" class="headerlink" title="Dynamic Select Method"></a>Dynamic Select Method</h3>
+        <h1 id="Inheritance"><a href="#Inheritance" class="headerlink" title="Inheritance"></a>Inheritance</h1><h3 id="Inerface-Inheritance"><a href="#Inerface-Inheritance" class="headerlink" title="Inerface Inheritance"></a>Inerface Inheritance</h3><p> 由于最近在观看CS61B的Java基础部分，对于Java的继承又有新的感悟，对此做一些总结。<br> 当使用接口继承(inerface inheritance), 需要在子类中使用implements关键词实现。<br> <figure class="highlight java"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">interface</span> <span class="title">List</span>&lt;<span class="title">T</span>&gt;</span>&#123;</span><br><span class="line">    <span class="comment">/**</span></span><br><span class="line"><span class="comment">     Return the indexth of List.</span></span><br><span class="line"><span class="comment">    */</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> T <span class="title">get</span><span class="params">(<span class="keyword">int</span> index)</span></span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">ArrayList</span>&lt;<span class="title">T</span>&gt; <span class="keyword">implements</span> <span class="title">List</span>&lt;<span class="title">T</span>&gt;</span>&#123;</span><br><span class="line">    <span class="meta">@override</span></span><br><span class="line">    <span class="function"><span class="keyword">public</span> T <span class="title">get</span><span class="params">(<span class="keyword">int</span> index)</span></span>&#123;</span><br><span class="line">        <span class="comment">// do stuffs;</span></span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p> List类与ArrayList是属于”is-a”的关系,对于子类重写的方法上面加上<code>@overraide</code>标签，并不是必须的</p>
+
       
     </div>
     
@@ -534,6 +569,21 @@
   
 
   
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
 
   
 
