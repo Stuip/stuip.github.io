@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="Computer network,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="本文阐述完成CS168的Project 1的步骤，该项目实现了Distance Vector Routing算法，并将该算法运行在每一个路由上，从而达到实现数据包进程传输。该项目将提供一个路由模拟器，该模拟器将路由器相互连接并连接到网络上的模拟主机。 前置知识在模拟器代码examples/hub.py中提供了hub实现，hub并没有对任何路由进行记录。这个hub仅仅实现了handle_data_p">
+<meta name="keywords" content="Computer network">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Distance Vector Routing">
+<meta property="og:url" content="http://yoursite.com/2023/03/16/230316/index.html">
+<meta property="og:site_name" content="A Standing Man">
+<meta property="og:description" content="本文阐述完成CS168的Project 1的步骤，该项目实现了Distance Vector Routing算法，并将该算法运行在每一个路由上，从而达到实现数据包进程传输。该项目将提供一个路由模拟器，该模拟器将路由器相互连接并连接到网络上的模拟主机。 前置知识在模拟器代码examples/hub.py中提供了hub实现，hub并没有对任何路由进行记录。这个hub仅仅实现了handle_data_p">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2023/03/16/230316/1.png">
+<meta property="og:image" content="http://yoursite.com/2023/03/16/230316/2.png">
+<meta property="og:updated_time" content="2023-03-19T07:18:06.616Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Distance Vector Routing">
+<meta name="twitter:description" content="本文阐述完成CS168的Project 1的步骤，该项目实现了Distance Vector Routing算法，并将该算法运行在每一个路由上，从而达到实现数据包进程传输。该项目将提供一个路由模拟器，该模拟器将路由器相互连接并连接到网络上的模拟主机。 前置知识在模拟器代码examples/hub.py中提供了hub实现，hub并没有对任何路由进行记录。这个hub仅仅实现了handle_data_p">
+<meta name="twitter:image" content="http://yoursite.com/2023/03/16/230316/1.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"remove","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2023/03/16/230316/">
+
+
+
+
+
+  <title>Distance Vector Routing | A Standing Man</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">A Standing Man</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2023/03/16/230316/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tang">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="A Standing Man">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">Distance Vector Routing</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-03-16T15:52:55+08:00">
+                2023-03-16
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Computer-network/" itemprop="url" rel="index">
+                    <span itemprop="name">Computer network</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>本文阐述完成CS168的Project 1的步骤，该项目实现了Distance Vector Routing算法，并将该算法运行在每一个路由上，从而达到实现数据包进程传输。该项目将提供一个路由模拟器，该模拟器将路由器相互连接并连接到网络上的模拟主机。</p>
+<h4 id="前置知识"><a href="#前置知识" class="headerlink" title="前置知识"></a>前置知识</h4><p>在模拟器代码<code>examples/hub.py</code>中提供了hub实现，hub并没有对任何路由进行记录。这个hub仅仅实现了<code>handle_data_packet</code>方法去flood数据包。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$ python3 simulator.py --start --default-switch-type=examples.hub topos.linear --n=<span class="number">3</span></span><br></pre></td></tr></table></figure></p>
+<p>你可以使用浏览器输入网址：<code>http://127.0.0.1:4444</code>访问这个虚拟器。</p>
+<h4 id="数据结构"><a href="#数据结构" class="headerlink" title="数据结构"></a>数据结构</h4><p>为了保存路由的状态，该项目提供了两种数据结构：<code>forwarding table(Table)</code>和<code>port(Ports)</code></p>
+<ul>
+<li><p><strong>Table</strong>： 对于每个主机（host），路由器(routers)维护一个与该host当前“最佳”路由对应的表项。每一个表项包含着以下几个变量:</p>
+<ul>
+<li>dst: 这条路由的目的地;</li>
+<li>port: 如果数据从该router出发想到达目的地dst，那么该数据包应该传输到那个端口;</li>
+<li>latency: 从这个路由出发到达目的地所需要花费的延迟; </li>
+<li>expire_time: 此路由过期的时间戳（以秒为单位）。<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 创建一个路由表，并向该路由表中添加了两个路由信息（h1和h2）</span></span><br><span class="line">t = Table()</span><br><span class="line">t[h1] = TableEntry(dst=h1, port=p1, latency=<span class="number">10</span>, expire_time=api.current_time()+<span class="number">20</span>)</span><br><span class="line">t[h2] = TableEntry(dst=h2, port=p2, latency=<span class="number">20</span>, expire_time=api.current_time()+<span class="number">20</span>)</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> host, entry <span class="keyword">in</span> t.items(): <span class="comment"># &lt;-- This is how you iterate through a dict.</span></span><br><span class="line">  <span class="keyword">print</span> (<span class="string">"Route to &#123;&#125; has &#123;&#125;"</span>.format(host, entry.latency)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<blockquote>
+<p>Note: TableEntry对象是不可修改的，只能重新创建一个新的TableEntry去更新路由表中。其中的路由表<code>self.table = {host: TableEntry}</code>是由Python的字典实现的。</p>
+</blockquote>
+</li>
+<li><strong>Ports</strong>: 保存当前路由所有的端口的集合以及相应的链路的延迟（latency）</li>
+<li><strong>Flags</strong>: 这些flags表示该路由此刻在什么状态<ul>
+<li><strong>self.SPLIT_HORIZON</strong></li>
+<li><strong>self.POISON_REVERSE</strong></li>
+<li><strong>self.POISON_ON_LINK_DOWN</strong></li>
+<li><strong>self.POISON_EXPIRED</strong></li>
+<li><strong>self.SEND_ON_LINK_UP</strong></li>
+</ul>
+</li>
+</ul>
+<h3 id="Forwarding"><a href="#Forwarding" class="headerlink" title="Forwarding"></a>Forwarding</h3><p>当一个路由在data plane上接收到一个数据包，它将根据它的路由表去决定该数据包向那个端口发送数据。</p>
+<h4 id="Stage1-Static-Routes"><a href="#Stage1-Static-Routes" class="headerlink" title="Stage1: Static Routes"></a>Stage1: Static Routes</h4><p>对于每一个主机（host）都会有一个路由与它直连。因此，主机需要手动添加这个主机的路由信息，其中路由的过期时间是<span style="color:red;"><strong>FOREVER</strong></span></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">add_static_route</span><span class="params">(self, host, port)</span>:</span></span><br><span class="line">    <span class="keyword">assert</span> port <span class="keyword">in</span> self.ports.get_all_ports(), <span class="string">"Link should be up, but is not."</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># <span class="doctag">TODO:</span> fill this in!</span></span><br><span class="line">    t = Table()</span><br><span class="line">    t[host] = TableEntry(dst=host, port=port, latency=self.ports.get_latency(port), expire_time=FOREVER)</span><br><span class="line">    self.table.update(t)</span><br></pre></td></tr></table></figure>
+<h3 id="Stage2-Forwarding"><a href="#Stage2-Forwarding" class="headerlink" title="Stage2: Forwarding"></a>Stage2: Forwarding</h3><p>这里需要实现传输数据包的功能 (<code>handle_data_packet</code>);<br>具体思路：</p>
+<ol>
+<li>一旦一个数据包来到这个路由时，路由会根据路由表去发送数据包。这里使用<code>send</code>函数去发送</li>
+<li>如果这个数据包的目的地不在路由表上，则丢弃这个数据包。还有这个数据包所传输的链路延迟大于等于<span style="color:red;"><strong>INFINITY</strong></span>,路由也应该丢弃。</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">handle_data_packet</span><span class="params">(self, packet, in_port)</span>:</span></span><br><span class="line">    <span class="keyword">if</span> packet.dst <span class="keyword">in</span> self.table <span class="keyword">and</span> self.table[packet.dst].latency &lt; INFINITY:</span><br><span class="line">        out_port = self.table[packet.dst].port</span><br><span class="line">        self.send(packet, out_port)</span><br></pre></td></tr></table></figure>
+<h3 id="Stage3-Sending-Routing-Tables-Advertisements"><a href="#Stage3-Sending-Routing-Tables-Advertisements" class="headerlink" title="Stage3: Sending Routing Tables Advertisements"></a>Stage3: Sending Routing Tables Advertisements</h3><p>之前完成的任务都是局限于两个主机连接在同一个路由器上数据发送和接受，并不能让连接在两个不同的路由器上的主机之间相互发送数据包。主要是因为在转发数据包的时候，邻居的路由器信息不在该路由表，所以导致路由会丢失该数据包。那么如何让它们之间可以转发数据包了？解决方式是定期地向相邻的路由之间发送自己的路由表信息。<br>具体思路：</p>
+<ul>
+<li>为了防止路由信息过期，需要定时地向邻居路由传送自己的路由表信息。这个框架利用<code>send_routes</code>自动出传输所有的路由信息。如果该函数的参数<code>force=True</code>，则将通告所有的路由表信息。如果<code>force=False</code>,则仅仅通告上次被修改过的路由。<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">send_routes</span><span class="params">(self, force=False, single_port=None)</span>:</span></span><br><span class="line">    <span class="comment">#这里只实现了force=True的情况</span></span><br><span class="line">    <span class="keyword">for</span> port <span class="keyword">in</span> self.ports.get_all_ports():</span><br><span class="line">        <span class="keyword">for</span> host, entry <span class="keyword">in</span> self.table.items():</span><br><span class="line">            self.send_route(port, entry.dst, entry.latency)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="Stage4-Handle-Route-Advertisements"><a href="#Stage4-Handle-Route-Advertisements" class="headerlink" title="Stage4: Handle Route Advertisements"></a>Stage4: Handle Route Advertisements</h3><p>我们完成之前的工作之后，仍然不能将连接不同的路由的两个主机相互传输数据，是因为我们传输这些路由表信息并没有被邻居路由处理。但邻居发送的路由信息和当前的路由信息性能一样，那么路由该如何处理？、<br>如果新的路由信息比当前的路由信息的性能要好，那么更新路由表。如果当前在路由表中的路由和新的路由信息一样的性能，仍然选择新的路由信息。并且这个新的路由信息设置15秒的到期时间。<br>这里考虑到的问题是：</p>
+<ul>
+<li>保证在选择最佳路径的时候，需要break ties。例如，当前路由表中的路径延迟与来源于邻居的延迟是相等的，那么此时路由表可以考虑不能更新此条路由信息。</li>
+<li>如果经过一轮更新之后，该路由信息表已经是最优的路径了，但是此时从相同的端口传输更加短的延迟的路由信息，此时路由表还是需要更新该条路由信息。</li>
+<li>还有一种情况，经过一轮更新之后，该路由表信息是最优的，但是此时相同的端口传输了一个更长的延迟路由信息，此时路由信息也需要更新路由信息表。是因为目的地相同，经过的路由变多了，但是为了确保数据包能够正确路径发送，因此也需要更新路由表项。</li>
+<li>另一种情况是，如果另一个端口发送一个经过更加少的路由（即更小的延迟），路由表也需要更新表项。</li>
+<li>但是如果另一个端口发送一个经过更多的路由（即更多的延迟），路由表就不需要更新表项。<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">handle_route_advertisement</span><span class="params">(self, route_dst, route_latency, port)</span>:</span></span><br><span class="line">    latency = self.ports.get_latency(port)</span><br><span class="line">    <span class="keyword">if</span> route_dst <span class="keyword">not</span> <span class="keyword">in</span> self.table:</span><br><span class="line">        self.update_route(route_dst, port, route_latency+latency, api.current_time()+self.ROUTE_TTL)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        cur_latency = self.table[route_dst].latency</span><br><span class="line">        <span class="keyword">if</span> cur_latency &gt; latency + route_latency <span class="keyword">or</span> self.table[route_dst].port == port:</span><br><span class="line">            self.update_route(route_dst, port, latency+route_latency, api.current_time()+self.ROUTE_TTL)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="Stage5-Handling-Routing-Tables-Timeouts"><a href="#Stage5-Handling-Routing-Tables-Timeouts" class="headerlink" title="Stage5: Handling Routing Tables Timeouts"></a>Stage5: Handling Routing Tables Timeouts</h3><p>当一个路由表项过期之后，路由需要去掉该路由表项。因此我们需要实现定期去扫描路由表去检查是否有表项已经过期了。<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">expire_routes</span><span class="params">(self)</span>:</span></span><br><span class="line">newtable = Table()</span><br><span class="line"><span class="keyword">for</span> host, entry <span class="keyword">in</span> self.table.items():</span><br><span class="line">    <span class="keyword">if</span> entry.expire_time &gt; api.current_time():</span><br><span class="line">        newtable[host] = entry</span><br><span class="line">self.table = newtable</span><br></pre></td></tr></table></figure></p>
+<h3 id="Stage6-Split-Horizon"><a href="#Stage6-Split-Horizon" class="headerlink" title="Stage6: Split Horizon"></a>Stage6: Split Horizon</h3><p>当两个路由s1,s2之间的链路之间断开，s2路由中的目的地为h1的信息最终会过期，从而这条表项会被去除。路由s2会从s3中接受到一条有关h1的表项，从而导致到达s1的路由路径一直在s2和s3之间增加。因为它们相信彼此可以到达主机h1，所以他们之间会一致传播它们的路由表项。</p>
+<table>
+<thead>
+<tr>
+<th></th>
+<th></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><img src="/2023/03/16/230316/1.png"></td>
+<td><img src="/2023/03/16/230316/2.png"></td>
+</tr>
+</tbody>
+</table>
+<p>为了解决这样的问题，我们使用Splite Horizon去避免路由之间的环路问题。具体来说，一个路由路径的信息是经过该路由传播过来的，那么在处理传播路由表信息时，就需要向它传播路由表项信息。（If you are using a route to destination D through neighbor N, dont advertise destination D to neighbor N ）<br><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">send_routes</span><span class="params">(self, force=False, single_port=None)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> port <span class="keyword">in</span> self.ports.get_all_ports():</span><br><span class="line">        <span class="keyword">for</span> host, entry <span class="keyword">in</span> self.table.items():</span><br><span class="line">            <span class="keyword">if</span> self.SPLIT_HORIZON <span class="keyword">and</span> port == entry.port:</span><br><span class="line">                <span class="comment"># 该路由设置了Split Horizon去避免路由环路问题</span></span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            self.send_route(port, entry.dst, entry.latency)</span><br></pre></td></tr></table></figure></p>
+<h3 id="Stage7-Poison-Reverse"><a href="#Stage7-Poison-Reverse" class="headerlink" title="Stage7: Poison Reverse"></a>Stage7: Poison Reverse</h3><p>Poison Revese: 当路由发现某一个目的地不可达，则将该路由表项的延迟设置为infinite,将这条路由表项传播给邻居路由。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">send_routes</span><span class="params">(self, force=False, single_port=None)</span>:</span></span><br><span class="line">    <span class="keyword">for</span> port <span class="keyword">in</span> self.ports.get_all_ports():</span><br><span class="line">        <span class="keyword">for</span> host, entry <span class="keyword">in</span> self.table.items():</span><br><span class="line">            <span class="keyword">if</span> self.SPLIT_HORIZON <span class="keyword">and</span> port == entry.port:</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            <span class="keyword">if</span> self.POISON_REVERSE <span class="keyword">and</span> port == entry.port:</span><br><span class="line">                self.send_route(port, entry.dst, INFINITY)</span><br><span class="line">                <span class="keyword">continue</span></span><br><span class="line">            self.send_route(port, entry.dst, entry.latency)</span><br></pre></td></tr></table></figure>
+<h3 id="Stage7-Counting-to-Infinity"><a href="#Stage7-Counting-to-Infinity" class="headerlink" title="Stage7: Counting to Infinity"></a>Stage7: Counting to Infinity</h3><p>之前的工作只能检测到两个相邻的路由之间循环。为了能够结束这样的循环，我们需要一个阙值来识别这个计数不会中止。这里将<strong>infinity</strong>作为阙值。一旦路由发现延迟比这个阙值高的话，将不会接受这样的路由信息。</p>
+<p>具体思路：需要更新<strong>handle_route_advertisements</strong>函数去支持以下内容（将<strong>INFINITY</strong>作为阙值）:</p>
+<ul>
+<li>如果一条有毒通告（latency = INFINITY）与当前路由表上有匹配项，这将这条表项被有毒通告取代。</li>
+<li>当一个新的通告到达，不要增加有毒通告的过期时间</li>
+<li>任何有毒的通告与路由表项中任意一项不匹配，则忽略<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">handle_route_advertisement</span><span class="params">(self, route_dst, route_latency, port)</span>:</span></span><br><span class="line">    latency = self.ports.get_latency(port)</span><br><span class="line">    <span class="keyword">if</span> route_dst <span class="keyword">not</span> <span class="keyword">in</span> self.table:</span><br><span class="line">        self.update_route(route_dst, port, route_latency+latency, api.current_time()+self.ROUTE_TTL)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        cur_latency = self.table[route_dst].latency</span><br><span class="line">        <span class="keyword">if</span> cur_latency &gt; latency + route_latency <span class="keyword">or</span> self.table[route_dst].port == port:</span><br><span class="line">            <span class="keyword">if</span> route_latency == INFINITY:</span><br><span class="line">                <span class="comment"># poisoned route</span></span><br><span class="line">                self.update_route(route_dst, port, route_latency, self.table[route_dst].expire_time)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                self.update_route(route_dst, port, latency+route_latency, api.current_time()+self.ROUTE_TTL)</span><br></pre></td></tr></table></figure>
+</li>
+</ul>
+<h3 id="Stage9-Poisoning-Expired-Routes"><a href="#Stage9-Poisoning-Expired-Routes" class="headerlink" title="Stage9: Poisoning Expired Routes"></a>Stage9: Poisoning Expired Routes</h3><p>当路由表中的某一个路由信息过期了，我们不仅需要将它移出路由表，并且将它相关的路径延迟设置为infinite，通告给相关的路由。<br>具体思路是当<strong>self.POISON_EXPIRED == True</strong>，我们需要确保这个有毒通告在路由表中至少存在<strong>self.ROUTE_TTL</strong><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">expire_routes</span><span class="params">(self)</span>:</span></span><br><span class="line">    newtable = Table()</span><br><span class="line">    <span class="keyword">for</span> host, entry <span class="keyword">in</span> self.table.items():</span><br><span class="line">        <span class="keyword">if</span> entry.expire_time &gt; api.current_time():</span><br><span class="line">            newtable[host] = entry</span><br><span class="line">        <span class="keyword">elif</span> self.POISON_EXPIRED <span class="keyword">and</span> entry.latency &lt; INFINITY:</span><br><span class="line">            newtable[host] = TableEntry(host, entry.port, INFINITY, api.current_time()+self.ROUTE_TTL)</span><br><span class="line">    self.table = newtable</span><br></pre></td></tr></table></figure></p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Computer-network/" rel="tag"><i class="fa fa-tag"></i> Computer network</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2021/12/06/211206/" rel="next" title="Java-Inheritance">
+                <i class="fa fa-chevron-left"></i> Java-Inheritance
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
