@@ -1,0 +1,699 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+
+
+<head><meta name="generator" content="Hexo 3.9.0">
+  <meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform">
+<meta http-equiv="Cache-Control" content="no-siteapp">
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css">
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+
+  
+
+  
+
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Lato:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css">
+
+<link href="/css/main.css?v=5.1.2" rel="stylesheet" type="text/css">
+
+
+  <meta name="keywords" content="xv6,MIT 6.1810,Operation System,">
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/images/favicon.ico?v=5.1.2">
+
+
+
+
+
+
+<meta name="description" content="Lab: system callsUsing gdb该任务主要体现使用gdb调试内核代码。首先在调试之前需要你确保已经配置好之前的工具链。 首先，需要开启两个命令窗口 1234567# window 1&amp;gt; cd xv-labs-2022&amp;gt; make qemu-gdb# window 2&amp;gt; riscv64-unknown-elf-gdb 或者 &amp;gt; gdb-multiarch(">
+<meta name="keywords" content="xv6,MIT 6.1810,Operation System">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MIT6.1810 Lab2">
+<meta property="og:url" content="http://yoursite.com/2023/06/11/230619/index.html">
+<meta property="og:site_name" content="A Standing Man">
+<meta property="og:description" content="Lab: system callsUsing gdb该任务主要体现使用gdb调试内核代码。首先在调试之前需要你确保已经配置好之前的工具链。 首先，需要开启两个命令窗口 1234567# window 1&amp;gt; cd xv-labs-2022&amp;gt; make qemu-gdb# window 2&amp;gt; riscv64-unknown-elf-gdb 或者 &amp;gt; gdb-multiarch(">
+<meta property="og:locale" content="zh-Hans">
+<meta property="og:image" content="http://yoursite.com/2023/06/11/230619/Untitled.png">
+<meta property="og:image" content="http://yoursite.com/2023/06/11/230619/Untitled%201.png">
+<meta property="og:image" content="http://yoursite.com/2023/06/11/230619/Untitled%202.png">
+<meta property="og:image" content="http://yoursite.com/2023/06/11/230619/Untitled%203.png">
+<meta property="og:updated_time" content="2023-06-19T08:38:52.109Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MIT6.1810 Lab2">
+<meta name="twitter:description" content="Lab: system callsUsing gdb该任务主要体现使用gdb调试内核代码。首先在调试之前需要你确保已经配置好之前的工具链。 首先，需要开启两个命令窗口 1234567# window 1&amp;gt; cd xv-labs-2022&amp;gt; make qemu-gdb# window 2&amp;gt; riscv64-unknown-elf-gdb 或者 &amp;gt; gdb-multiarch(">
+<meta name="twitter:image" content="http://yoursite.com/2023/06/11/230619/Untitled.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"remove","offset":12,"offset_float":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: true,
+    tabs: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2023/06/11/230619/">
+
+
+
+
+
+  <title>MIT6.1810 Lab2 | A Standing Man</title>
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">A Standing Man</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle"></p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories/" rel="section">
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives/" rel="section">
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags/" rel="section">
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2023/06/11/230619/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="Tang">
+      <meta itemprop="description" content>
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="A Standing Man">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">MIT6.1810 Lab2</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2023-06-11T19:03:04+08:00">
+                2023-06-11
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+            <span class="post-category">
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/6-1810/" itemprop="url" rel="index">
+                    <span itemprop="name">6.1810</span>
+                  </a>
+                </span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Lab-system-calls"><a href="#Lab-system-calls" class="headerlink" title="Lab: system calls"></a>Lab: system calls</h1><h3 id="Using-gdb"><a href="#Using-gdb" class="headerlink" title="Using gdb"></a>Using gdb</h3><p>该任务主要体现使用<code>gdb</code>调试内核代码。首先在调试之前需要你确保已经配置好之前的工具链。</p>
+<p>首先，需要开启两个命令窗口</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># window 1</span></span><br><span class="line">&gt; <span class="built_in">cd</span> xv-labs-2022</span><br><span class="line">&gt; make qemu-gdb</span><br><span class="line"></span><br><span class="line"><span class="comment"># window 2</span></span><br><span class="line">&gt; riscv64-unknown-elf-gdb 或者 &gt; gdb-multiarch</span><br><span class="line">(gdb)</span><br></pre></td></tr></table></figure>
+<p>对于如何运行gdb和一些常见调试出现的问题，提供在该<a href="https://pdos.csail.mit.edu/6.828/2022/labs/gdb.html" target="_blank" rel="noopener">链接</a>中。这里的任务主要熟悉在内核代码中调试。</p>
+<p>这里主要介绍两种常见的调试方式：</p>
+<p><strong>调试内核代码</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># window 1</span></span><br><span class="line">&gt; <span class="built_in">cd</span> xv-labs-2022</span><br><span class="line">&gt; make qemu-gdb</span><br><span class="line">$ ls  <span class="comment"># 这里ls输入需要等到另一个窗口输入c之后再输入</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># window 2</span></span><br><span class="line">&gt; gdb-multiarch</span><br><span class="line">(gdb) b kernel/syscall.c:syscall <span class="comment"># 在kernel/syscall.c文件中的syscall函数打断点</span></span><br><span class="line">(gdb) c  <span class="comment"># countinue</span></span><br><span class="line">(gdb) layout src <span class="comment"># 在GDB开启源码小窗口</span></span><br><span class="line"><span class="comment"># 这个就可以使用si或者是ni来单步调试 =&gt; si和ni都是单步调试，但是si可能调入函数内部进行观察</span></span><br></pre></td></tr></table></figure>
+<p><strong>调试用户代码</strong></p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># window 1</span></span><br><span class="line">&gt; <span class="built_in">cd</span> xv-labs-2022</span><br><span class="line">&gt; make qemu-gdb</span><br><span class="line">$ ls</span><br><span class="line"></span><br><span class="line"><span class="comment"># window 2</span></span><br><span class="line">&gt; gdb-multiarch</span><br><span class="line">(gdb) file user/_ls</span><br><span class="line">(gdb) b main</span><br><span class="line">(gdb) c</span><br></pre></td></tr></table></figure>
+<p>让我们开始第一个任务，我们按照指令输入到gdb中得到以下图片</p>
+<center><img src="/2023/06/11/230619/Untitled.png" alt="GDB调试"></center>
+
+<blockquote>
+<p>Looking at the backtrace output, which function called <code>syscall</code>?<br>Answer： 是 <strong>kernel/trap.c</strong> 的<code>usertrap</code>函数调用<code>syscall</code>函数。</p>
+</blockquote>
+<p>通过几步GDB命令-<code>n</code>来跳过<code>struct proc *p = myproc()</code> ，之后使用<strong><code>p /x *p</code></strong> (该命令是以十六进制来查看当前进程的结构)</p>
+<blockquote>
+<p>What is the value of p-&gt;trapframe-&gt;a7 and what does that value represent?<br>答案：7, 代表用户调用的系统调用的索引<br>解析: <code>p-&gt;trapframe-&gt;a7</code>储存着系统调用的索引，而xv6开始启动的第一个程序是init程序(<code>initcode.S</code>)，可以从<code>initcode.S</code>中看到它将<code>SYS_exec</code>储存入<code>a7</code>中，所以寄存器<code>a7</code>中的值是7</p>
+</blockquote>
+<p>此时进程正在内核中运行，所以可以查看特权寄存器</p>
+<blockquote>
+<p>What was the previous mode that the CPU was in?<br>答案：其中<strong><code>sstatus</code></strong>寄存器中的值为0x22 → 0b100010， 因此之前的机器状态是user mode.<br>解析：<strong><code>sstatus</code></strong> 寄存器可以追踪处理器当前操作的状态，其中SPP bit表示为之前进入supervisor mode的特权级别，如果一个trap触发，当它是从user mode中发生的话，那么SPP bit设置为0，否则的话，则设置为1。</p>
+</blockquote>
+<center><img src="/2023/06/11/230619/Untitled%201.png" alt="Supervisor-mode sstatus寄存器"></center>
+
+<p>将kernel/syscall.c:167中<code>num = p-&gt;trapframe-&gt;a7;</code> 改为<code>num = * (int *) 0</code> ，重新启动<code>make qemu</code> ，将会出现以下报错代码</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">xv6 kernel is booting</span><br><span class="line"></span><br><span class="line">scause 0x000000000000000d</span><br><span class="line">sepc=0x000000008000209e stval=0x0000000000000000</span><br><span class="line">panic: kerneltrap</span><br></pre></td></tr></table></figure>
+<center><img src="/2023/06/11/230619/Untitled%202.png" alt="Untitled"></center>
+
+<blockquote>
+<p>Write down the assembly instruction the kernel is panicing at. Which register corresponds to the varialable num?<br>答案：<code>lw s2,0(zero)</code> 这段汇编代码导致kernel出错，且可以看到将num的值储存在s2中</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">(gdb) b *0x000000008000209e</span><br><span class="line">Breakpoint 1 at 0x8000209e: file kernel/syscall.c, line 167.</span><br><span class="line">(gdb) layout asm</span><br></pre></td></tr></table></figure>
+<center><img src="/2023/06/11/230619/Untitled%203.png" alt="Untitled"></center>
+
+<p>我们可以看到和在kernel/kernel.asm中搜索的结果一样；</p>
+<blockquote>
+<p>Why does the kernel crash? Hint: look at figure 3-3 in the text; is address 0 mapped in the kernel address space? Is that confirmed by the value in scause above?<br>答案：由于使用了不能访问的地址（0x0）<br>解析：我们可以从<code>scause</code>寄存器看到kernel触发异常的原因，这里出现的数字为0xd。我们查询 <a href="https://pdos.csail.mit.edu/6.828/2022/labs/n//github.com/riscv/riscv-isa-manual/releases/download/Priv-v1.12/riscv-privileged-20211203.pdf" target="_blank" rel="noopener">RISC-V privileged instructions</a>知道是因为缺页导致。</p>
+</blockquote>
+<p>这里仅仅知道kernel触发异常的原因，还需要进步了解出现在哪个程序。</p>
+<blockquote>
+<p>What is the name of the binary that was running when the kernel paniced? What is its process id (pid)?<br>答案：initcode程序, 进程ID是1<br>解析：我们可以使用<code>p p→name</code> 和 <code>p p→pid</code>来查看。</p>
+</blockquote>
+<h3 id="System-call-tracing（中等）"><a href="#System-call-tracing（中等）" class="headerlink" title="System call tracing（中等）"></a><strong>System call tracing（中等）</strong></h3><blockquote>
+<p>这个任务中，我们将添加一个系统调用追踪功能。你需要创建一个新的系统调用<code>trace</code> 。它有一个整数参数<code>mask</code> ，它表明是追踪哪一个系统调用。例如，<code>trace(1 &lt;&lt; SYS_fork)</code> 追踪的是<code>fork</code>系统调用。修改系统调用打印出每一次调用该系统调用的信息。<br>The line: <the process id>: syscall <the name of the system call> → <return value></return></the></the></p>
+</blockquote>
+<p>首先讲一下这个<code>mask</code>的作用，我们可以在kernel/syscall.h中看到xv6中所有的系统调用的索引号。</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">mask = 1 &lt;&lt; SYS_fork  <span class="comment"># 说明track系统调用需要追踪fork函数</span></span><br><span class="line">mask = (1 &lt;&lt; SYS_fork) | (1 &lt;&lt; SYS_exity) <span class="comment"># 说明track系统调用需要追踪fork和exit函数</span></span><br></pre></td></tr></table></figure>
+<p>具体步骤：</p>
+<ol>
+<li><p>在<strong>Makefile</strong>文件中添加到<code>$U/_trace</code></p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">......</span><br><span class="line"><span class="variable">$U</span>/_wc\</span><br><span class="line"><span class="variable">$U</span>/_zombie\</span><br><span class="line"><span class="variable">$U</span>/_trace\</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>分别在<code>user/user.h</code>、<code>user/usys.pl</code>、<code>kernel/syscall.h</code> 和<code>kernel/syscall.c</code>添加相关代码</p>
+ <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line">user/user.h</span><br><span class="line">····</span><br><span class="line">int sleep(int);</span><br><span class="line">int uptime(void);</span><br><span class="line">int trace(int);  <span class="comment"># 定义系统调用</span></span><br><span class="line"></span><br><span class="line">user/usys.pl</span><br><span class="line">······</span><br><span class="line">entry(<span class="string">"sleep"</span>);</span><br><span class="line">entry(<span class="string">"uptime"</span>);</span><br><span class="line">entry(<span class="string">"trace"</span>); <span class="comment"># 这里产生一个usys.S,用于ecall执行切换用户态到内核态</span></span><br><span class="line"></span><br><span class="line">kernel/syscall.h</span><br><span class="line"></span><br><span class="line">·······</span><br><span class="line"><span class="comment">#define SYS_unlink 18</span></span><br><span class="line"><span class="comment">#define SYS_link   19</span></span><br><span class="line"><span class="comment">#define SYS_mkdir  20</span></span><br><span class="line"><span class="comment">#define SYS_close  21</span></span><br><span class="line"><span class="comment">#define SYS_trace  22  #添加系统调用索引号</span></span><br><span class="line"></span><br><span class="line">kernel/syscall.c</span><br><span class="line"></span><br><span class="line">......</span><br><span class="line">extern uint64 sys_mkdir(void);</span><br><span class="line">extern uint64 sys_close(void);</span><br><span class="line">extern uint64 sys_trace(void);</span><br><span class="line"></span><br><span class="line">.......</span><br><span class="line">[SYS_link]    sys_link,</span><br><span class="line">[SYS_mkdir]   sys_mkdir,</span><br><span class="line">[SYS_close]   sys_close,</span><br><span class="line">[SYS_trace]   sys_trace,</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在<code>kernel/sysproc.c</code>中添加<code>sys_trace()</code> 函数，这里函数主要作用是取得系统调用参数并在<code>proc</code> 结构体中声明一个新的变量来储存该参数。</p>
+ <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// kernel/sysproc.c</span></span><br><span class="line"></span><br><span class="line">uint64</span><br><span class="line">sys_trace(<span class="keyword">void</span>)</span><br><span class="line">&#123;</span><br><span class="line"><span class="keyword">int</span> mask;</span><br><span class="line">argint(<span class="number">0</span>, &amp;mask);</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">p</span> = <span class="title">myproc</span>();</span> <span class="comment">// return current process's pointer</span></span><br><span class="line">p-&gt;mask = mask;</span><br><span class="line"><span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>并需要在fork函数(kernel/proc.c:280)调用中将父进程的mask参数传到子进程中。这里我们可以了解到父进程创建子进程的步骤</p>
+<ol>
+<li>首先会创建一个子进程，如果创建不成功，直接返回-1。</li>
+<li>将父进程的内存空间直接拷贝给子进程，其实就是将父进程的页表的内容复制给子进程的页表的内容并开辟相同大小的空间。</li>
+<li>将父进程的大小赋值给子进程的大小和父进程的用户寄存器(<code>p→trapframe</code>)拷贝给子进程</li>
+<li>设置fork函数返回值(<code>np-&gt;trapframe-&gt;a0</code>)为0、自增父进程所引用的文件引用数</li>
+<li><p>最后需要设置子进程的父进程和子进程的状态。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">....</span><br><span class="line"><span class="comment">// trace mask from the parent to the child process</span></span><br><span class="line">np-&gt;mask = p-&gt;mask;</span><br><span class="line">....</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+<li><p>最终需要修改<code>kernel/syscall.c</code> 的代码逻辑。</p>
+<p> 提示：因为每一个系统调用都需要经过<code>syscall</code>函数， 所以我们可以得到每一个系统调用索引号<code>num</code> 。首先该索引号必须是合法索引号（即之前在<code>kernel\syscall.h</code> 添加的），然后将如果该索引号在该进程的<code>mask</code> (p→mask)里，就输出那段信息。</p>
+</li>
+</ol>
+<h3 id="Sysinfo（中等）"><a href="#Sysinfo（中等）" class="headerlink" title="Sysinfo（中等）"></a><strong>Sysinfo（中等）</strong></h3><blockquote>
+<p>该任务添加一个系统调用<code>sysinfo</code> ，该系统调用收集运行的系统相关信息。该系统调用时有一个参数：该参数是一个结构体指针（<code>struct sysinfo</code>）: <code>freemem</code>字段时空闲内存的大小和<code>nproc</code>字段是还没有使用的进程个数。</p>
+</blockquote>
+<p>根据前一个任务来添加相应的函数定义和设定让系统能够正常运行起来。在<code>user/user.h</code>中添加系统调用定义如下：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">user/user.h</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">sysinfo</span>;</span></span><br><span class="line"><span class="function"><span class="keyword">int</span> <span class="title">sysinfo</span><span class="params">(struct sysinfo *)</span></span>;</span><br></pre></td></tr></table></figure>
+<p><strong>思路</strong>：</p>
+<ol>
+<li><p>在<code>kernel/sysproc.c</code>中的<code>sys_info(void)</code> 函数主要完成三个步骤：</p>
+<ol>
+<li>将用户态下<code>struct sysinfo</code> 地址提取到<strong>addr</strong>中。</li>
+<li><p>在<code>kernel/kalloc.c</code>设计出函数计算出xv6还没有使用的是内存大小。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// count the number of processes whose state is not UNUSED</span></span><br><span class="line">uint64 </span><br><span class="line">unuseproc()</span><br><span class="line">&#123;</span><br><span class="line">    <span class="class"><span class="keyword">struct</span> <span class="title">proc</span> *<span class="title">p</span>;</span></span><br><span class="line">    uint64 count = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span>(p = proc; p &lt; &amp;proc[NPROC]; p++) &#123;</span><br><span class="line">    acquire(&amp;p-&gt;lock);</span><br><span class="line">    <span class="keyword">if</span>(p-&gt;state != UNUSED) &#123;</span><br><span class="line">        count++;</span><br><span class="line">    &#125;</span><br><span class="line">    release(&amp;p-&gt;lock);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> count;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>在<code>kernel/proc.c</code> 设计出函数计算出xv6还没有使用的进程的个数。</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// Count the amount of free memory.</span></span><br><span class="line">uint64</span><br><span class="line">freemems()</span><br><span class="line">&#123;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">run</span> *<span class="title">r</span>;</span></span><br><span class="line">uint64 count = <span class="number">0</span>;</span><br><span class="line"></span><br><span class="line">acquire(&amp;kmem.lock);</span><br><span class="line">r = kmem.freelist;</span><br><span class="line"><span class="keyword">while</span>(r)&#123;</span><br><span class="line">    count++;</span><br><span class="line">    r = r-&gt;next;</span><br><span class="line">&#125;</span><br><span class="line">release(&amp;kmem.lock);</span><br><span class="line">count *= PGSIZE;</span><br><span class="line"><span class="keyword">return</span> count;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+<li><p>然后将内核态中的地址<strong>info</strong>拷贝到用户态<strong>addr</strong>中。</p>
+  <figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span>(copyout(p-&gt;pagetable, addr, (<span class="keyword">char</span> *)&amp;info, <span class="keyword">sizeof</span>(info)) &lt; <span class="number">0</span>) &#123;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+</li>
+</ol>
+</li>
+</ol>
+<h3 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h3><p>这个Lab主要是了解到简单的GDB调试和通过添加系统调用来熟悉内核是如何运作这些和如何将这些暴露给用户使用的。</p>
+
+      
+    </div>
+    
+    
+    
+
+    
+
+    
+
+    
+
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/xv6/" rel="tag"><i class="fa fa-tag"></i> xv6</a>
+          
+            <a href="/tags/MIT-6-1810/" rel="tag"><i class="fa fa-tag"></i> MIT 6.1810</a>
+          
+            <a href="/tags/Operation-System/" rel="tag"><i class="fa fa-tag"></i> Operation System</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2023/03/16/230316/" rel="next" title="Distance Vector Routing">
+                <i class="fa fa-chevron-left"></i> Distance Vector Routing
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2023/06/11/230611/" rel="prev" title="MIT6.1810 Lab1">
+                MIT6.1810 Lab1 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.2"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.2"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.2"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.2"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
